@@ -1,5 +1,7 @@
 FROM node:16-alpine3.15
 
+ARG TARGETPLATFORM
+
 # Install dependencies not included in the base image
 RUN apk update
 RUN apk upgrade
@@ -18,8 +20,23 @@ COPY . /data
 WORKDIR /data
 RUN corepack enable
 RUN corepack prepare yarn@3.0.1 --activate
-RUN yarn
-RUN yarn build
+
+# Subroutine for arm64 platform
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+        echo "Current platform linux/amd64"; \
+        yarn install --silent; \
+        yarn build; \
+    elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
+        echo "Current platform linux/arm64"; \
+        apk add --no-cache build-base; \
+        yarn add node-gyp; \
+        yarn install --silent; \
+        yarn build; \
+    else \
+        echo "Unsupported platform: $TARGETPLATFORM"; \
+        exit 1; \
+    fi
+
 RUN chmod +x dist/bin/*
 
 # Set the entrypoint and main command
