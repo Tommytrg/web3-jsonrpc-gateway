@@ -3,11 +3,8 @@ FROM node:16-alpine3.15
 ARG TARGETPLATFORM
 
 # Install dependencies not included in the base image
-RUN apk update
-RUN apk upgrade
-RUN apk --no-cache add bash ca-certificates curl
-RUN apk add --no-cache git
-RUN apk add --no-cache openssh-client
+RUN apk update && upgrade
+RUN apk --no-cache add bash ca-certificates curl git openssh-client
 
 # Update CA certificates
 RUN update-ca-certificates
@@ -18,8 +15,7 @@ COPY . /data
 
 # Navigate to the nodejs root package, install dependencies and build the project
 WORKDIR /data
-RUN corepack enable
-RUN corepack prepare yarn@3.0.1 --activate
+RUN corepack enable && corepack prepare yarn@3.0.1 --activate
 
 # Subroutine for arm64 platform
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
@@ -29,7 +25,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
     elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
         echo "Current platform linux/arm64"; \
         apk add --no-cache build-base; \
-        yarn add node-gyp; \
+        yarn global add node-gyp; \
         yarn install --silent; \
         yarn build; \
     else \
