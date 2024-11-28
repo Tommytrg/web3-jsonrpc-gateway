@@ -1,10 +1,10 @@
-FROM node:20-alpine3.20
+FROM node:20-bookworm
 
 ARG TARGETPLATFORM
 
 # Install dependencies not included in the base image
-RUN apk update && apk upgrade
-RUN apk --no-cache add bash ca-certificates curl git openssh-client
+RUN apt update && apt upgrade -y
+RUN apt install bash ca-certificates curl git openssh-client
 
 # Update CA certificates
 RUN update-ca-certificates
@@ -24,7 +24,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
         yarn build; \
     elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
         echo "Current platform linux/arm64"; \
-        apk add --no-cache build-base; \
+        apt install build-essential; \
         yarn global add node-gyp; \
         yarn; \
         yarn build; \
