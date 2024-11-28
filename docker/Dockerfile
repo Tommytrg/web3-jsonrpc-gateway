@@ -18,17 +18,16 @@ WORKDIR /data
 RUN corepack enable && corepack prepare yarn@3.0.1 --activate
 
 # Subroutine for arm64 platform
-RUN set -e; \
-    if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
         echo "Current platform linux/amd64"; \
-        yarn; \
-        yarn build; \
+        yarn || exit 1; \
+        yarn build || exit 1; \
     elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
         echo "Current platform linux/arm64"; \
         apt install build-essential; \
-        yarn global add node-gyp; \
-        yarn; \
-        yarn build; \
+        yarn global add node-gyp || exit 1; \
+        yarn || exit 1; \
+        yarn build || exit 1; \
     else \
         echo "Unsupported platform: $TARGETPLATFORM"; \
         exit 1; \
