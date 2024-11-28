@@ -20,13 +20,13 @@ RUN corepack enable && corepack prepare yarn@3.0.1 --activate
 # Subroutine for arm64 platform
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
         echo "Current platform linux/amd64"; \
-        yarn install --silent; \
+        yarn; \
         yarn build; \
     elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
         echo "Current platform linux/arm64"; \
         apk add --no-cache build-base; \
         yarn global add node-gyp; \
-        yarn install --silent; \
+        yarn; \
         yarn build; \
     else \
         echo "Unsupported platform: $TARGETPLATFORM"; \
