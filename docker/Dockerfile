@@ -3,7 +3,7 @@ FROM node:16-alpine3.15
 ARG TARGETPLATFORM
 
 # Install dependencies not included in the base image
-RUN apk update && upgrade
+RUN apk update && apk upgrade
 RUN apk --no-cache add bash ca-certificates curl git openssh-client
 
 # Update CA certificates
