@@ -18,7 +18,8 @@ WORKDIR /data
 RUN corepack enable && corepack prepare yarn@3.0.1 --activate
 
 # Subroutine for arm64 platform
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+RUN set -e; \
+    if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
         echo "Current platform linux/amd64"; \
         yarn; \
         yarn build; \
